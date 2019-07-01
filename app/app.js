@@ -45,10 +45,15 @@ new Vue({
       this.checkWin();
     },
     heal() {
-      return true;
+      if (this.playerHealth <= 90) {
+        this.playerHealth += 10;
+      } else {
+        this.playerHealth = 100;
+      }
+      this.monsterAttack();
     },
     giveUp() {
-      return true;
+      this.game.isRunning = false;
     }
   }
 });
