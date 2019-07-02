@@ -3,6 +3,7 @@ new Vue({
   data: {
     playerHealth: 100,
     monsterHealth: 100,
+    turns: [],
     game: {
       isRunning: false
     }
@@ -12,10 +13,17 @@ new Vue({
       this.game.isRunning = true;
       this.playerHealth = 100;
       this.monsterHealth = 100;
+      // reseting log
+      this.turns = [];
     },
     attack() {
-      // Reducing monsterHealth after attacking him
-      this.monsterHealth -= this.calcDamage(3, 10);
+      let damage = this.calcDamage(3, 10);
+      this.monsterHealth -= damage;
+      // TURN
+      this.turns.unshift({
+        isPlayer: true,
+        text: `Player hits Monster for ${damage}`
+      });
       if (this.checkWin()) return;
 
       this.monsterAttack();
@@ -33,15 +41,24 @@ new Vue({
         return true;
       }
     },
-    // specialAttack just deals more damage
     specialAttack() {
-      this.monsterHealth -= this.calcDamage(10, 20);
+      let damage = this.calcDamage(10, 20);
+      this.monsterHealth -= damage;
       if (this.checkWin()) return;
-
+      this.turns.unshift({
+        isPlayer: true,
+        text: `Player hits hard Monster for ${damage}`
+      });
       this.monsterAttack();
     },
     monsterAttack() {
-      this.playerHealth -= this.calcDamage(5, 12);
+      let damage = this.calcDamage(5, 12);
+      this.playerHealth -= damage;
+      // TURN
+      this.turns.unshift({
+        isPlayer: false,
+        text: `Monster hits Player for ${damage}`
+      });
       this.checkWin();
     },
     heal() {
@@ -50,6 +67,10 @@ new Vue({
       } else {
         this.playerHealth = 100;
       }
+      this.turns.unshift({
+        isPlayer: true,
+        text: `Player heals for 10`
+      });
       this.monsterAttack();
     },
     giveUp() {
